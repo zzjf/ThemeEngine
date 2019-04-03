@@ -10,6 +10,9 @@
 #import <ThemeKit/TKRendition.h>
 #import "TERenditionsController+Dragging.h"
 #import "TEExportController.h"
+#import "TEExportController.h"
+#import "AppDelegate.h"
+
 
 static NSString *keyForGroupTag(NSInteger tag) {
     switch (tag) {
@@ -139,9 +142,19 @@ static const void *PREVIEWIMAGECHANGED = &PREVIEWIMAGECHANGED;
     return YES;
 }
 
+
 - (IBAction)removeSelection:(id)sender {
-    NSLog(@"remove rends");
+    // 获取Document对象
+    NSArray *documents = ((AppDelegate*)([NSApplication sharedApplication].delegate)).documentController.documents;
+    if (documents.count <= 0) {
+        return;
+    }
+    Document *document = documents[0];
+    for (TKRendition *rendition in [self.renditionsArrayController selectedObjects]) {
+        [document.assetStorage removeRendition:rendition];
+    }
 }
+
 
 - (IBAction)receiveFromEditor:(id)sender {
     [[TEExportController sharedExportController] importRenditions:[self.renditionsArrayController selectedObjects]];
